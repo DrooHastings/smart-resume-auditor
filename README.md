@@ -22,16 +22,16 @@ Smart Resume Auditor is a Node.js/Express application that uses OpenAI GPT-4 and
    npm install
    ```
 3. **Set up your OpenAI API key:**
-   - Create a `.env` file in the root directory:
-     ```
-     OPENAI_API_KEY=your_openai_api_key_here
-     ```
+   Create a `.env` file in the root directory:
+   ```
+   OPENAI_API_KEY=your_openai_api_key_here
+   ```
 4. **Run the server:**
    ```bash
    node server.js
    ```
 5. **Open the app:**
-   - Visit [http://localhost:3000](http://localhost:3000) in your browser.
+   Visit [http://localhost:3000](http://localhost:3000) in your browser.
 
 ## Testing
 
