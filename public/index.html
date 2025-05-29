@@ -43,18 +43,92 @@
 
 <body>
     <h1>AI Resume Auditor</h1>
-    <label>Resume:</label>
-    <textarea id="resume"></textarea>
+    <div id="resumeFormContainer">
+        <form id="resumeForm" onsubmit="return false;">
+            <label>Name:</label>
+            <input type="text" id="name" required><br>
+            <label>Email:</label>
+            <input type="email" id="email" required><br>
+            <label>Phone:</label>
+            <input type="text" id="phone" required><br>
+            <label>Summary:</label>
+            <textarea id="summary" required></textarea>
+            <div id="experience-sections"></div>
+            <button type="button" id="addExperienceBtn">Add Experience</button>
+            <h3>Education</h3>
+            <label>Degree:</label>
+            <input type="text" id="degree_1"><br>
+            <label>School:</label>
+            <input type="text" id="school_1"><br>
+            <label>Dates:</label>
+            <input type="text" id="school_1_dates"><br>
+            <label>Skills:</label>
+            <input type="text" id="skills"><br>
+        </form>
+        <button type="button" id="saveResumeBtn">Save Resume Data</button>
+    </div>
+    <button type="button" id="changeResumeBtn" style="display:none;">Change Saved Resume</button>
     <label>Job Description:</label>
     <textarea id="jobDesc"></textarea>
     <button type="button" onclick="analyze()">Analyze</button>
+    <button type="button" id="previewResumeBtn">Preview Enhanced Resume</button>
+    <button type="button" id="downloadResumeBtn">Download Resume as DOCX</button>
     <div id="loader" style="display:none;text-align:center;margin-top:1rem;">
         <div class="spinner"></div>
         <div>Analyzing...</div>
     </div>
     <div id="results"></div>
+    <div id="previewModal" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.7);z-index:1000;align-items:center;justify-content:center;">
+        <div style="background:#fff;padding:2rem;max-width:700px;width:90vw;max-height:90vh;overflow:auto;position:relative;">
+            <button id="closePreviewModal" style="position:absolute;top:10px;right:10px;">Close</button>
+            <div id="previewContent"></div>
+        </div>
+    </div>
 
     <script src="script.js"></script>
+    <script>
+    // Dynamically generate experience sections
+    const experienceSections = document.getElementById('experience-sections');
+    const addExperienceBtn = document.getElementById('addExperienceBtn');
+    let experienceCount = 0;
+    const maxExperience = 10;
+
+    function createExperienceSection(idx) {
+        return `
+        <div class="experience-entry" id="experience_${idx}">
+            <h3>Experience ${idx}</h3>
+            <label>Job Title:</label>
+            <input type="text" id="job_${idx}_title"><br>
+            <label>Company:</label>
+            <input type="text" id="job_${idx}_company"><br>
+            <label>Location:</label>
+            <input type="text" id="job_${idx}_location"><br>
+            <label>Dates:</label>
+            <input type="text" id="job_${idx}_dates"><br>
+            <label>Bullet 1:</label>
+            <input type="text" id="bullet_${idx}_1"><br>
+            <label>Bullet 2:</label>
+            <input type="text" id="bullet_${idx}_2"><br>
+            <label>Bullet 3:</label>
+            <input type="text" id="bullet_${idx}_3"><br>
+        </div>
+        `;
+    }
+
+    function addExperienceSection() {
+        if (experienceCount < maxExperience) {
+            experienceCount++;
+            experienceSections.insertAdjacentHTML('beforeend', createExperienceSection(experienceCount));
+        }
+        if (experienceCount === maxExperience) {
+            addExperienceBtn.disabled = true;
+        }
+    }
+
+    // Initialize with 3 experience sections
+    for (let i = 0; i < 3; i++) addExperienceSection();
+    addExperienceBtn.onclick = addExperienceSection;
+    </script>
 </body>
 
 </html>
