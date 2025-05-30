@@ -3,31 +3,71 @@
 
 <head>
     <title>AI Resume Auditor</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <link rel="icon" type="image/png" href="assets/JobCrafter.png">
     <style>
+        :root {
+            --jc-navy: #14263c;
+            --jc-navy-light: #223a5e;
+            --jc-gold: #FFC857;
+            --jc-accent: #f5f6fa;
+        }
+        html, body {
+            height: 100%;
+        }
         body {
-            font-family: sans-serif;
-            max-width: 800px;
-            margin: auto;
-            padding: 2rem;
+            background: var(--jc-accent);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
-
-        textarea {
-            width: 100%;
-            height: 150px;
-            margin-bottom: 1rem;
+        .section {
+            flex: 1 0 auto;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
         }
-
-        button {
-            padding: 0.5rem 1rem;
+        .container {
+            flex: 1 0 auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            min-height: 100vh;
         }
-
-        #results {
-            margin-top: 2rem;
+        .navbar, .hero.is-primary, .button.is-link, .button.is-primary, .button.is-info, .button.is-success, .button.is-warning {
+            background-color: var(--jc-navy) !important;
+            border-color: var(--jc-navy) !important;
+            color: #fff !important;
         }
-
+        .button.is-link.is-light {
+            background-color: var(--jc-navy-light) !important;
+            color: #fff !important;
+        }
+        .box, .modal-card {
+            border: 1.5px solid var(--jc-navy-light);
+            border-radius: 10px;
+        }
+        .title, .subtitle, .label {
+            color: var(--jc-navy);
+        }
+        .has-text-centered.mb-4 img {
+            border-radius: 12px;
+            box-shadow: 0 4px 24px 0 rgba(20,38,60,0.10);
+        }
+        .modal-card-head, .modal-card-title {
+            background: var(--jc-navy);
+            color: #fff;
+        }
+        .modal-card {
+            border: 2px solid var(--jc-navy);
+        }
+        .button.is-link:focus, .button.is-primary:focus, .button.is-info:focus, .button.is-success:focus, .button.is-warning:focus {
+            box-shadow: 0 0 0 2px var(--jc-navy-light) !important;
+        }
         .spinner {
             border: 6px solid #f3f3f3;
-            border-top: 6px solid #3498db;
+            border-top: 6px solid var(--jc-navy);
             border-radius: 50%;
             width: 40px;
             height: 40px;
@@ -38,56 +78,147 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        #previewModal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        #previewModal.is-active {
+            display: flex;
+        }
+        .button.is-warning, .has-background-warning {
+            background-color: var(--jc-gold) !important;
+            border-color: var(--jc-gold) !important;
+            color: var(--jc-navy) !important;
+        }
+        .button.is-warning:focus {
+            box-shadow: 0 0 0 2px var(--jc-gold) !important;
+        }
+        a, .is-link.is-light {
+            color: var(--jc-gold);
+        }
+        hr {
+            border-top: 2px solid var(--jc-gold);
+        }
     </style>
 </head>
 
 <body>
-    <h1>AI Resume Auditor</h1>
-    <div id="resumeFormContainer">
-        <form id="resumeForm" onsubmit="return false;">
-            <label>Name:</label>
-            <input type="text" id="name" required><br>
-            <label>Email:</label>
-            <input type="email" id="email" required><br>
-            <label>Phone:</label>
-            <input type="text" id="phone" required><br>
-            <label>Summary:</label>
-            <textarea id="summary" required></textarea>
-            <div id="experience-sections"></div>
-            <button type="button" id="addExperienceBtn">Add Experience</button>
-            <h3>Education</h3>
-            <label>Degree:</label>
-            <input type="text" id="degree_1"><br>
-            <label>School:</label>
-            <input type="text" id="school_1"><br>
-            <label>Dates:</label>
-            <input type="text" id="school_1_dates"><br>
-            <label>Skills:</label>
-            <input type="text" id="skills"><br>
-        </form>
-        <button type="button" id="saveResumeBtn">Save Resume Data</button>
-    </div>
-    <button type="button" id="changeResumeBtn" style="display:none;">Change Saved Resume</button>
-    <label>Job Description:</label>
-    <textarea id="jobDesc"></textarea>
-    <button type="button" onclick="analyze()">Analyze</button>
-    <button type="button" id="previewResumeBtn">Preview Enhanced Resume</button>
-    <button type="button" id="downloadResumeBtn">Download Resume as DOCX</button>
-    <div id="loader" style="display:none;text-align:center;margin-top:1rem;">
-        <div class="spinner"></div>
-        <div>Analyzing...</div>
-    </div>
-    <div id="results"></div>
-    <div id="previewModal" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.7);z-index:1000;align-items:center;justify-content:center;">
-        <div style="background:#fff;padding:2rem;max-width:700px;width:90vw;max-height:90vh;overflow:auto;position:relative;">
-            <button id="closePreviewModal" style="position:absolute;top:10px;right:10px;">Close</button>
-            <div id="previewContent"></div>
+    <section class="section">
+        <div class="container">
+            <div class="has-text-centered mb-4">
+                <img src="assets/JobCrafter.png" alt="JobCrafter Logo" style="max-width:25rem; height:auto;">
+            </div>
+            <h1 class="title has-text-centered">AI Resume Auditor</h1>
+            <div id="resumeFormContainer">
+                <form id="resumeForm" onsubmit="return false;" class="box">
+                    <div class="columns">
+                        <div class="column">
+                            <div class="field">
+                                <label class="label">Name</label>
+                                <div class="control">
+                                    <input class="input" type="text" id="name" required>
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label class="label">Email</label>
+                                <div class="control">
+                                    <input class="input" type="email" id="email" required>
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label class="label">Phone</label>
+                                <div class="control">
+                                    <input class="input" type="text" id="phone" required>
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label class="label">Summary</label>
+                                <div class="control">
+                                    <textarea class="textarea" id="summary" required></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="column">
+                            <div id="experience-sections"></div>
+                            <button type="button" id="addExperienceBtn" class="button is-link is-light mb-3">Add Experience</button>
+                        </div>
+                    </div>
+                    <div class="columns">
+                        <div class="column">
+                            <h3 class="subtitle">Education</h3>
+                            <div class="field">
+                                <label class="label">Degree</label>
+                                <div class="control">
+                                    <input class="input" type="text" id="degree_1">
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label class="label">School</label>
+                                <div class="control">
+                                    <input class="input" type="text" id="school_1">
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label class="label">Dates</label>
+                                <div class="control">
+                                    <input class="input" type="text" id="school_1_dates">
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label class="label">Skills</label>
+                                <div class="control">
+                                    <input class="input" type="text" id="skills">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <button type="button" id="saveResumeBtn" class="button is-success is-fullwidth mb-4">Save Resume Data</button>
+            </div>
+            <button type="button" id="changeResumeBtn" style="display:none;" class="button is-warning is-fullwidth mb-4">Change Saved Resume</button>
+            <div class="box">
+                <div class="field">
+                    <label class="label">Job Description</label>
+                    <div class="control">
+                        <textarea class="textarea" id="jobDesc"></textarea>
+                    </div>
+                </div>
+                <div class="buttons is-centered mt-3">
+                    <button type="button" onclick="analyze()" class="button is-link">Analyze</button>
+                    <button type="button" id="previewResumeBtn" class="button is-info">Preview Enhanced Resume</button>
+                    <button type="button" id="downloadResumeBtn" class="button is-primary">Download Resume as DOCX</button>
+                </div>
+            </div>
+            <div id="loader" style="display:none;text-align:center;margin-top:1rem;">
+                <div class="spinner"></div>
+                <div>Analyzing...</div>
+            </div>
+            <div id="results"></div>
+        </div>
+    </section>
+    <div id="previewModal" class="modal">
+        <div class="modal-background"></div>
+        <div class="modal-card">
+            <header class="modal-card-head">
+                <p class="modal-card-title">Enhanced Resume Preview</p>
+                <button id="closePreviewModal" class="delete" aria-label="close"></button>
+            </header>
+            <section class="modal-card-body">
+                <div id="previewContent"></div>
+            </section>
         </div>
     </div>
-
     <script src="script.js"></script>
     <script>
-    // Dynamically generate experience sections
+    // Dynamically generate experience sections with Bulma styling
     const experienceSections = document.getElementById('experience-sections');
     const addExperienceBtn = document.getElementById('addExperienceBtn');
     let experienceCount = 0;
@@ -95,22 +226,50 @@
 
     function createExperienceSection(idx) {
         return `
-        <div class="experience-entry" id="experience_${idx}">
-            <h3>Experience ${idx}</h3>
-            <label>Job Title:</label>
-            <input type="text" id="job_${idx}_title"><br>
-            <label>Company:</label>
-            <input type="text" id="job_${idx}_company"><br>
-            <label>Location:</label>
-            <input type="text" id="job_${idx}_location"><br>
-            <label>Dates:</label>
-            <input type="text" id="job_${idx}_dates"><br>
-            <label>Bullet 1:</label>
-            <input type="text" id="bullet_${idx}_1"><br>
-            <label>Bullet 2:</label>
-            <input type="text" id="bullet_${idx}_2"><br>
-            <label>Bullet 3:</label>
-            <input type="text" id="bullet_${idx}_3"><br>
+        <div class="box experience-entry" id="experience_${idx}">
+            <h3 class="subtitle">Experience ${idx}</h3>
+            <div class="field">
+                <label class="label">Job Title</label>
+                <div class="control">
+                    <input class="input" type="text" id="job_${idx}_title">
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">Company</label>
+                <div class="control">
+                    <input class="input" type="text" id="job_${idx}_company">
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">Location</label>
+                <div class="control">
+                    <input class="input" type="text" id="job_${idx}_location">
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">Dates</label>
+                <div class="control">
+                    <input class="input" type="text" id="job_${idx}_dates">
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">Bullet 1</label>
+                <div class="control">
+                    <input class="input" type="text" id="bullet_${idx}_1">
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">Bullet 2</label>
+                <div class="control">
+                    <input class="input" type="text" id="bullet_${idx}_2">
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">Bullet 3</label>
+                <div class="control">
+                    <input class="input" type="text" id="bullet_${idx}_3">
+                </div>
+            </div>
         </div>
         `;
     }
@@ -128,6 +287,17 @@
     // Initialize with 3 experience sections
     for (let i = 0; i < 3; i++) addExperienceSection();
     addExperienceBtn.onclick = addExperienceSection;
+
+    // Modal logic for Bulma
+    const previewModal = document.getElementById('previewModal');
+    const closePreviewModal = document.getElementById('closePreviewModal');
+    closePreviewModal.onclick = function() {
+        previewModal.classList.remove('is-active');
+    };
+    // Also close modal if background is clicked
+    document.querySelector('#previewModal .modal-background').onclick = function() {
+        previewModal.classList.remove('is-active');
+    };
     </script>
 </body>
 
