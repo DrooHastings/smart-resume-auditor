@@ -9,17 +9,21 @@
         :root {
             --jc-navy: #14263c;
             --jc-navy-light: #223a5e;
-            --jc-gold: #FFC857;
+            --jc-gold: #6495ED;
             --jc-accent: #f5f6fa;
+            --jc-gradient: linear-gradient(135deg, #223a5e 0%, #14263c 100%);
+            --jc-bg-gradient: linear-gradient(120deg, #f5f6fa 0%, #e3eafc 100%);
         }
         html, body {
             height: 100%;
+            font-weight: 600;
         }
         body {
-            background: var(--jc-accent);
+            background: var(--jc-bg-gradient);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            font-weight: 600;
         }
         .section {
             flex: 1 0 auto;
@@ -34,22 +38,36 @@
             flex-direction: column;
             justify-content: flex-start;
             min-height: 100vh;
+            max-width: 900px;
+            margin: 0 auto;
         }
-        .navbar, .hero.is-primary, .button.is-link, .button.is-primary, .button.is-info, .button.is-success, .button.is-warning {
-            background-color: var(--jc-navy) !important;
-            border-color: var(--jc-navy) !important;
-            color: #fff !important;
-        }
-        .button.is-link.is-light {
-            background-color: var(--jc-navy-light) !important;
-            color: #fff !important;
+        .form-accent-bar {
+            height: 8px;
+            width: 100%;
+            background: var(--jc-gold);
+            border-radius: 10px 10px 0 0;
+            margin-bottom: 0.5rem;
         }
         .box, .modal-card {
             border: 1.5px solid var(--jc-navy-light);
-            border-radius: 10px;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px 0 rgba(20,38,60,0.10);
+            background: #fff;
         }
         .title, .subtitle, .label {
             color: var(--jc-navy);
+        }
+        .subtitle, .label {
+            font-weight: 600;
+            font-size: 1.15rem;
+        }
+        .subtitle {
+            color: var(--jc-gold);
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+        }
+        .label {
+            margin-bottom: 0.2rem;
         }
         .has-text-centered.mb-4 img {
             border-radius: 12px;
@@ -65,33 +83,20 @@
         .button.is-link:focus, .button.is-primary:focus, .button.is-info:focus, .button.is-success:focus, .button.is-warning:focus {
             box-shadow: 0 0 0 2px var(--jc-navy-light) !important;
         }
-        .spinner {
-            border: 6px solid #f3f3f3;
-            border-top: 6px solid var(--jc-navy);
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 10px auto;
+        .button, .input, .textarea {
+            transition: box-shadow 0.2s, border-color 0.2s;
         }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        .input:focus, .textarea:focus {
+            border-color: var(--jc-gold) !important;
+            box-shadow: 0 0 0 2px var(--jc-gold) !important;
         }
-        #previewModal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(0,0,0,0.7);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
+        .button:hover, .button:focus {
+            filter: brightness(1.08);
+            box-shadow: 0 2px 8px 0 rgba(20,38,60,0.10);
         }
-        #previewModal.is-active {
-            display: flex;
+        .button.is-link.is-light {
+            background-color: var(--jc-navy-light) !important;
+            color: #fff !important;
         }
         .button.is-warning, .has-background-warning {
             background-color: var(--jc-gold) !important;
@@ -107,6 +112,24 @@
         hr {
             border-top: 2px solid var(--jc-gold);
         }
+        .field {
+            margin-bottom: 1.1rem;
+        }
+        .box {
+            padding-top: 0.5rem;
+            padding-bottom: 2rem;
+        }
+        input, textarea, .label, .subtitle, .button, .field, .box, .modal-card, .columns, .column {
+            font-weight: 600 !important;
+        }
+        h1.title {
+            font-weight: 400 !important;
+        }
+        #downloadResumeBtn.button.is-primary {
+            background-color: #0C1E3C !important;
+            border-color: #0C1E3C !important;
+            color: #fff !important;
+        }
     </style>
 </head>
 
@@ -119,38 +142,40 @@
             <h1 class="title has-text-centered">AI Resume Auditor</h1>
             <div id="resumeFormContainer">
                 <form id="resumeForm" onsubmit="return false;" class="box">
-                    <div class="columns">
-                        <div class="column">
-                            <div class="field">
-                                <label class="label">Name</label>
-                                <div class="control">
-                                    <input class="input" type="text" id="name" required>
-                                </div>
-                            </div>
-                            <div class="field">
-                                <label class="label">Email</label>
-                                <div class="control">
-                                    <input class="input" type="email" id="email" required>
-                                </div>
-                            </div>
-                            <div class="field">
-                                <label class="label">Phone</label>
-                                <div class="control">
-                                    <input class="input" type="text" id="phone" required>
-                                </div>
-                            </div>
-                            <div class="field">
-                                <label class="label">Summary</label>
-                                <div class="control">
-                                    <textarea class="textarea" id="summary" required></textarea>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="column">
-                            <div id="experience-sections"></div>
-                            <button type="button" id="addExperienceBtn" class="button is-link is-light mb-3">Add Experience</button>
+                    <div class="form-accent-bar"></div>
+                    <div class="field">
+                        <label class="label">Name</label>
+                        <div class="control">
+                            <input class="input" type="text" id="name" required>
                         </div>
                     </div>
+                    <div class="field">
+                        <label class="label">Email</label>
+                        <div class="control">
+                            <input class="input" type="email" id="email" required>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label class="label">Phone</label>
+                        <div class="control">
+                            <input class="input" type="text" id="phone" required>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label class="label">Summary</label>
+                        <div class="control">
+                            <textarea class="textarea" id="summary" required></textarea>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label class="label">Core Skills <span style="font-weight:normal; font-size:0.9em; color:var(--jc-navy-light);">(bullets, comma or semicolon separated)</span></label>
+                        <div class="control">
+                            <input class="input" type="text" id="coreSkills" placeholder="e.g. Leadership, Communication, Python; Agile, Mentoring">
+                        </div>
+                    </div>
+                    <div id="experience-sections"></div>
+                    <div style="margin-bottom: 2.5rem;"></div>
+                    <button type="button" id="addExperienceBtn" class="button is-link is-light mb-3">Add Experience</button>
                     <div class="columns">
                         <div class="column">
                             <h3 class="subtitle">Education</h3>

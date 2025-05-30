@@ -16,6 +16,31 @@ function getResumeDataFromForm() {
         ],
         skills: document.getElementById('skills').value
     };
+    // Parse core skills into bullets
+    const coreSkillsRaw = document.getElementById('coreSkills')?.value || '';
+    // Split by newlines or section headers (e.g., 'Frontend:', 'Backend:', etc.)
+    // If no section headers, treat as one group
+    let coreSkills = [];
+    if (coreSkillsRaw.match(/\w+:/)) {
+        // Sectioned format
+        const sectionRegex = /([\w &+\/-]+):\s*([^\n]+)/g;
+        let match;
+        while ((match = sectionRegex.exec(coreSkillsRaw)) !== null) {
+            const section = match[1].trim();
+            const skills = match[2].split(/[,;]+/).map(s => s.trim()).filter(Boolean);
+            if (skills.length > 0) {
+                coreSkills.push({ section, skills });
+            }
+        }
+    } else {
+        // Flat format
+        const skills = coreSkillsRaw.split(/[,;\n]+/).map(s => s.trim()).filter(Boolean);
+        if (skills.length > 0) {
+            coreSkills.push({ section: '', skills });
+        }
+    }
+    data.coreSkills = coreSkills;
+    data.coreSkillsRaw = coreSkillsRaw;
     // Gather all experience entries
     let idx = 1;
     while (document.getElementById(`job_${idx}_title`)) {
