@@ -17,7 +17,7 @@ Smart Resume Auditor is a Node.js/Express application that uses OpenAI GPT-4 and
 
 1. **Clone the repository:**
    ```bash
-   git clone <your-repo-url>
+   git clone (https://github.com/DrooHastings/smart-resume-auditor.git)
    cd smart-resume-auditor
    ```
 2. **Install dependencies:**
@@ -39,6 +39,7 @@ Smart Resume Auditor is a Node.js/Express application that uses OpenAI GPT-4 and
    ```
 6. **Open the app:**
    - Visit [http://localhost:3000](http://localhost:3000) in your browser.
+
 
 ## Testing
 
