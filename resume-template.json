@@ -1,0 +1,38 @@
+{
+  "name": "{{name}}",
+  "email": "{{email}}",
+  "phone": "{{phone}}",
+  "summary": "{{summary}}",
+  "experience": [
+    {
+      "job_title": "{{job_1_title}}",
+      "company": "{{job_1_company}}",
+      "location": "{{job_1_location}}",
+      "dates": "{{job_1_dates}}",
+      "bullets": [
+        "{{bullet_1_1}}",
+        "{{bullet_1_2}}",
+        "{{bullet_1_3}}"
+      ]
+    },
+    {
+      "job_title": "{{job_2_title}}",
+      "company": "{{job_2_company}}",
+      "location": "{{job_2_location}}",
+      "dates": "{{job_2_dates}}",
+      "bullets": [
+        "{{bullet_2_1}}",
+        "{{bullet_2_2}}",
+        "{{bullet_2_3}}"
+      ]
+    }
+  ],
+  "education": [
+    {
+      "degree": "{{degree_1}}",
+      "school": "{{school_1}}",
+      "dates": "{{school_1_dates}}"
+    }
+  ],
+  "skills": "{{skills}}"
+} 
