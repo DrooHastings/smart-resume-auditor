@@ -1,0 +1,138 @@
+{
+  "name": "Droo Hastings",
+  "email": "droo.hastings@gmail.com",
+  "phone": "612-695-6500",
+  "summary": "I lead engineering teams with a focus on clarity, trust, and sustainable execution. My background spans full-stack development, infrastructure, and technical leadership in mission-driven environments. I prioritize long-term team health and high-leverage systems, whether mentoring developers at a public media organization or building tools for musicians as part of a product-driven side project. I'm especially energized by companies that empower creators or invest in thoughtful engineering cultures.",
+  "experience": [
+    {
+      "job_title": "Software Engineering Manager",
+      "company": "Twin Cities PBS",
+      "location": "Saint Paul, MN",
+      "dates": "December 2022 – Presen",
+      "bullets": [
+        "Built and scaled a high-performing dev team post-COVID, replacing outdated practices with a focus on maintainable systems and team health.",
+        "Partnered with product and design teams to define realistic roadmaps aligned with fundraising and audience goals.",
+        "Embedded accessibility and performance as foundational principles across all projects."
+      ]
+    },
+    {
+      "job_title": "Founding Engineer",
+      "company": "Cause Cart",
+      "location": "Lisbon, Portugal (remote)",
+      "dates": "2024 – Present",
+      "bullets": [
+        "Co-leading product development of an AI-powered platform that helps schools, nonprofits, and public media organizations optimize donor conversion through personalized pledge gift flows.",
+        "Built the MVP using Node.js, JAMstack, and CMS integrations; collaborated closely with users to validate core features through direct interviews.",
+        "Currently expanding the platform's AI capabilities to tailor donation experiences based on user behavior and campaign performance."
+      ]
+    },
+    {
+      "job_title": "Engineering Manager",
+      "company": "Fjorge Digital",
+      "location": "Minneapolis, MN",
+      "dates": "June 2021 - December 2022",
+      "bullets": [
+        "Managed a team of 9 engineers, balancing delivery with coaching and professional development.",
+        "Shifted the tone of client relationships from reactive to roadmap-focused, improving stability and outcomes.",
+        "Led projects using React, WordPress, and headless CMS architectures."
+      ]
+    },
+    {
+      "job_title": "Lead Shopify Developer",
+      "company": "Truth Superfoods",
+      "location": "London, UK",
+      "dates": "Sept 2020 - December 2022",
+      "bullets": [
+        "Built and maintained custom e-commerce features with international teams.",
+        "Focused on frontend performance, conversion, and asynchronous collaboration.",
+        ""
+      ]
+    },
+    {
+      "job_title": "Lead Developer",
+      "company": "Riley Hayes",
+      "location": "Minneapolis, MN",
+      "dates": "May 2019 - June 2021",
+      "bullets": [
+        "Led the dev side of a creative agency during COVID.",
+        "Built React component libraries and modernized legacy stacks for high-profile Fortune 500 campaigns.",
+        ""
+      ]
+    },
+    {
+      "job_title": "Developer II",
+      "company": "Fjorge Digital",
+      "location": "Minneapolis, MN",
+      "dates": "Aug 2017 - May 2019",
+      "bullets": [
+        "Lead developer on multiple CMS-driven and custom web builds.",
+        "Promoted for reliability, mentoring, and quality execution.",
+        ""
+      ]
+    },
+    {
+      "job_title": "Recording Artist",
+      "company": "Epic Records / Red Ink (Sony Music)",
+      "location": "NY, NY",
+      "dates": "2004 - 2017",
+      "bullets": [
+        "Signed to a major label and built a 13-year career as a touring and recording artist, earning a gold record and performing internationally.",
+        "Managed creative production, brand development, and business operations in a high-pressure, public-facing industry.",
+        ""
+      ]
+    }
+  ],
+  "education": [
+    {
+      "degree": "Full Stack Software Engineering Certificate",
+      "school": "Prime Digital Academy",
+      "dates": "2017"
+    }
+  ],
+  "skills": "MEAN Stack",
+  "coreSkills": [
+    {
+      "section": "Frontend",
+      "skills": [
+        "React",
+        "TypeScript",
+        "JavaScript",
+        "Vue.js",
+        "HTML5",
+        "CSS3",
+        "Sass Backend & Infrastructure: Node.js",
+        "PHP",
+        "MySQL",
+        "PostgreSQL",
+        "MongoDB",
+        "REST APIs",
+        "Docker",
+        "AWS Architecture & Practices: CI/CD",
+        "Agile",
+        "Scrum",
+        "Microservices",
+        "Code Reviews",
+        "DevOps Collaboration",
+        "Technical Roadmapping Platforms: WordPress",
+        "Drupal",
+        "Shopify",
+        "Craft CMS",
+        "Magento",
+        "Next.js",
+        "Astro",
+        "Decap CMS",
+        "Tina CMS",
+        "React",
+        "TypeScript",
+        "Node.js",
+        "REST APIs",
+        "JAMstack architecture Leadership: Team Management",
+        "Career Growth",
+        "Hiring",
+        "Mentorship",
+        "Cross-functional Communication"
+      ]
+    }
+  ],
+  "coreSkillsRaw": "Frontend: React, TypeScript, JavaScript, Vue.js, HTML5, CSS3, Sass Backend & Infrastructure: Node.js, PHP, MySQL, PostgreSQL, MongoDB, REST APIs, Docker, AWS Architecture & Practices: CI/CD, Agile, Scrum, Microservices, Code Reviews, DevOps Collaboration, Technical Roadmapping Platforms: WordPress, Drupal, Shopify, Craft CMS, Magento, Next.js, Astro, Decap CMS, Tina CMS, React, TypeScript, Node.js, REST APIs, JAMstack architecture Leadership: Team Management, Career Growth, Hiring, Mentorship, Cross-functional Communication"
+} 

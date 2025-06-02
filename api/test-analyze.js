@@ -1,6 +1,7 @@
 const fetch = require('node-fetch');
 const assert = require('assert');
 const fs = require('fs');
+const { exec } = require('child_process');
 
 async function checkServer() {
     try {
@@ -138,6 +139,20 @@ async function runTests() {
         await testAnalyze();
         await testPreviewEnhancedResume();
         await testDownloadResume();
+        // Run the enhanced resume download test
+        console.log('Running enhanced resume DOCX download test...');
+        await new Promise((resolve, reject) => {
+            exec('node api/test-download.js', (error, stdout, stderr) => {
+                if (stdout) process.stdout.write(stdout);
+                if (stderr) process.stderr.write(stderr);
+                if (error) {
+                    console.error('Enhanced resume DOCX download test failed.');
+                    reject(error);
+                } else {
+                    resolve();
+                }
+            });
+        });
         console.log('All tests completed.');
     } catch (err) {
         console.error('Test failed:', err);

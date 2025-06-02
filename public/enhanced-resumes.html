@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Enhanced Resumes | JobCrafter</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <link rel="icon" type="image/png" href="assets/JobCrafter.png">
+    <style>
+        body {
+            background: linear-gradient(120deg, #f5f6fa 0%, #e3eafc 100%);
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 900px;
+            margin: 2rem auto;
+        }
+        .resume-card {
+            border: 1.5px solid #6495ED;
+            border-radius: 14px;
+            box-shadow: 0 4px 24px 0 rgba(20,38,60,0.08);
+            background: #fff;
+            margin-bottom: 2rem;
+            padding: 1.5rem 2rem;
+        }
+        .resume-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .resume-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #14263c;
+        }
+        .resume-date {
+            color: #6495ED;
+            font-size: 0.95rem;
+        }
+        .button.is-link {
+            background-color: #6495ED !important;
+            border-color: #6495ED !important;
+            color: #fff !important;
+        }
+        .button.is-dark {
+            background-color: #14263c !important;
+            border-color: #14263c !important;
+            color: #fff !important;
+        }
+        .button.is-danger {
+            background-color: #ff3860 !important;
+            border-color: #ff3860 !important;
+            color: #fff !important;
+        }
+        .button.is-primary {
+            background-color: #0C1E3C !important;
+            border-color: #0C1E3C !important;
+            color: #fff !important;
+        }
+        .details {
+            margin-top: 1rem;
+            display: none;
+        }
+        .details.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="has-text-centered mb-4">
+            <img src="assets/JobCrafter.png" alt="JobCrafter Logo" style="max-width:12rem; height:auto;">
+        </div>
+        <h1 class="title has-text-centered">Enhanced Resumes</h1>
+        <div class="has-text-centered mb-5">
+            <a href="index.html" class="button is-dark">Back to Main Page</a>
+        </div>
+        <div id="resumesList"></div>
+    </div>
+    <script>
+    async function fetchResumes() {
+        const res = await fetch('/api/enhanced-resumes');
+        const data = await res.json();
+        const resumes = data.resumes || [];
+        const list = document.getElementById('resumesList');
+        if (resumes.length === 0) {
+            list.innerHTML = '<p>No enhanced resumes found.</p>';
+            return;
+        }
+        list.innerHTML = resumes.map((r, idx) => {
+            const resume = r.resume;
+            const mainTitle = resume.name ? `${resume.name} (${resume.email})` : 'Resume';
+            const jobTitle = resume.experience && resume.experience[0] ? resume.experience[0].job_title : '';
+            const created = new Date(r.created_at).toLocaleString();
+            return `
+            <div class="resume-card">
+                <div class="resume-header">
+                    <span class="resume-title">${mainTitle}</span>
+                    <span class="resume-date">${created}</span>
+                </div>
+                <div><strong>Job Title:</strong> ${jobTitle}</div>
+                <div><strong>Job Description:</strong> <span style="color:#223a5e;">${r.job_description ? r.job_description.slice(0, 120) + (r.job_description.length > 120 ? '...' : '') : 'N/A'}</span></div>
+                <button class="button is-link mt-3" onclick="toggleDetails(${idx})" id="detailsBtn${idx}">Show Details</button>
+                <a class="button is-primary mt-3" href="/api/enhanced-resumes/${r.id}/download" download>Download as DOCX</a>
+                <button class="button is-danger mt-3" onclick="confirmDeleteResume(${r.id})">Delete</button>
+                <div class="details" id="details${idx}">
+                    <pre style="white-space:pre-wrap;word-break:break-word;background:#f8fafd;padding:1rem;border-radius:8px;">${JSON.stringify(resume, null, 2)}</pre>
+                </div>
+            </div>
+            `;
+        }).join('');
+    }
+    function toggleDetails(idx) {
+        const details = document.getElementById('details' + idx);
+        const btn = document.getElementById('detailsBtn' + idx);
+        if (details.classList.contains('active')) {
+            details.classList.remove('active');
+            btn.textContent = 'Show Details';
+        } else {
+            details.classList.add('active');
+            btn.textContent = 'Hide Details';
+        }
+    }
+    function confirmDeleteResume(id) {
+        if (confirm('Are you sure you want to delete this enhanced resume? This action cannot be undone.')) {
+            deleteResume(id);
+        }
+    }
+    async function deleteResume(id) {
+        const res = await fetch(`/api/enhanced-resumes/${id}`, { method: 'DELETE' });
+        if (res.ok) {
+            alert('Resume deleted.');
+            fetchResumes();
+        } else {
+            alert('Failed to delete resume.');
+        }
+    }
+    fetchResumes();
+    window.toggleDetails = toggleDetails;
+    window.confirmDeleteResume = confirmDeleteResume;
+    </script>
+</body>
+</html> 

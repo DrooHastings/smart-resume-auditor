@@ -3,7 +3,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const dotenv = require('dotenv');
 const cors = require('cors');
-const { Document, Packer, Paragraph, TextRun } = require('docx');
+const { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType, Table, TableRow, TableCell, WidthType, BorderStyle, ImageRun } = require('docx');
 const fs = require('fs');
 const db = require('../db');
 
@@ -245,10 +245,10 @@ ${resume}
         const missingSkills = getMissingSkills(skillsJobArr, skillsResumeArr, 3);
         console.log('Missing skills:', missingSkills);
 
-        // Ask GPT to generate 3 new resume bullets that integrate the missing skills
+        // Ask GPT to generate 10 new resume bullets that integrate the missing skills
         let bulletsForMissingSkills = '';
         if (missingSkills.length > 0) {
-            const bulletsPrompt = `Write 3 new resume bullets that integrate the following missing skills into the candidate's experience. Use the context of the resume and job description for realism.\n\nMissing Skills: ${missingSkills.join(', ')}\n\nRESUME:\n${resume}\n\nJOB DESCRIPTION:\n${jobDesc}`;
+            const bulletsPrompt = `Write up to 10 new resume bullets that integrate the following missing skills into the candidate's experience, but only if they are supported by the actual resume content.\n- Do not invent or exaggerate experience, achievements, or skills that are not present in the resume.\n- If a missing skill cannot be truthfully integrated based on the resume, do not include it.\n- Use the language and context of the resume and job description for realism, but prioritize accuracy and truthfulness.\n\nMissing Skills: ${missingSkills.join(', ')}\n\nRESUME:\n${resume}\n\nJOB DESCRIPTION:\n${jobDesc}`;
             try {
                 const bulletsCompletion = await openai.chat.completions.create({
                     model: 'gpt-4',
@@ -312,8 +312,14 @@ router.post('/save-resume', (req, res) => {
 router.get('/saved-resume', (req, res) => {
     const isTest = req.query.isTest === 'true';
     getLatestResume((err, row) => {
-        if (err) return res.json({ exists: false });
-        res.json({ exists: !!row });
+        if (err || !row) return res.json({ exists: false });
+        let resume = null;
+        try {
+            resume = JSON.parse(row.resume_data);
+        } catch (e) {
+            return res.json({ exists: true, error: 'Failed to parse resume data.' });
+        }
+        res.json({ exists: true, resume });
     }, isTest);
 });
 
@@ -339,58 +345,146 @@ router.get('/download-resume', (req, res) => {
 function sendDocx(res, resumeObj) {
     try {
         const sections = [];
-        // Name and contact
+
+        // Centered image at the top (replace name)
+        try {
+            const imagePath = 'public/assets/HASTINGS.png';
+            const imageBuffer = fs.readFileSync(imagePath);
+            // Set width to 3 inches (3 * 96 = 288) and height to 1.5 inches (1.5 * 96 = 144)
+            const width = 288;
+            const height = 144;
+            sections.push(new Paragraph({
+                alignment: AlignmentType.CENTER,
+                children: [
+                    new ImageRun({
+                        data: imageBuffer,
+                        transformation: { width: width, height: height }
+                    })
+                ],
+                spacing: { after: 40 }
+            }));
+        } catch (e) {
+            console.error('Failed to load image for DOCX:', e);
+            // If image fails, fallback to placeholder text
+            sections.push(new Paragraph({
+                alignment: AlignmentType.CENTER,
+                children: [
+                    new TextRun({ text: '[HASTINGS LOGO]', bold: true, size: 48, font: "Calibri", color: "8B0000" })
+                ],
+                spacing: { after: 80 }
+            }));
+        }
+
+        // Contact info (centered, smaller)
         sections.push(new Paragraph({
+            alignment: AlignmentType.CENTER,
             children: [
-                new TextRun({ text: resumeObj.name, bold: true, size: 32 }),
-                new TextRun({ text: `\n${resumeObj.email} | ${resumeObj.phone}`, size: 24 })
-            ]
+                new TextRun({ text: `${resumeObj.email} | ${resumeObj.phone}`, size: 22, font: "Calibri", color: "666666" }),
+            ],
+            spacing: { after: 80 }
         }));
+
+        // Horizontal line (dark red)
+        sections.push(new Paragraph({
+            border: { bottom: { color: "8B0000", space: 1, value: "single", size: 6 } },
+            spacing: { after: 120 }
+        }));
+
         // Summary
         if (resumeObj.summary) {
             sections.push(new Paragraph({
+                heading: HeadingLevel.HEADING_2,
+                children: [
+                    new TextRun({ text: "Summary", color: "8B0000", bold: true })
+                ],
+                spacing: { after: 40, before: 120 }
+            }));
+            sections.push(new Paragraph({
                 text: resumeObj.summary,
-                spacing: { after: 200 }
+                spacing: { after: 120 }
             }));
         }
+
         // Experience
         if (resumeObj.experience && resumeObj.experience.length > 0) {
-            sections.push(new Paragraph({ text: 'Experience', bold: true, spacing: { after: 100 } }));
+            sections.push(new Paragraph({
+                heading: HeadingLevel.HEADING_2,
+                children: [
+                    new TextRun({ text: "Experience", color: "8B0000", bold: true })
+                ],
+                spacing: { after: 40, before: 120 }
+            }));
             resumeObj.experience.forEach(exp => {
+                // Job title and company (bold), location/dates (italic, right)
                 sections.push(new Paragraph({
-                    text: `${exp.job_title} - ${exp.company} (${exp.location}) [${exp.dates}]`,
-                    bold: true
+                    children: [
+                        new TextRun({ text: `${exp.job_title} - ${exp.company}`, bold: true, size: 22 }),
+                        new TextRun({ text: `   ${exp.location} | ${exp.dates}`, italics: true, size: 22, color: "666666" })
+                    ],
+                    spacing: { after: 20 }
                 }));
+                // Bullets
                 exp.bullets.forEach(bullet => {
                     if (bullet) {
-                        sections.push(new Paragraph({ text: `• ${bullet}`, bullet: { level: 0 } }));
+                        sections.push(new Paragraph({
+                            text: bullet,
+                            bullet: { level: 0 },
+                            spacing: { after: 10 }
+                        }));
                     }
                 });
+                sections.push(new Paragraph({})); // Extra space after each job
             });
         }
+
         // Education
         if (resumeObj.education && resumeObj.education.length > 0) {
-            sections.push(new Paragraph({ text: 'Education', bold: true, spacing: { after: 100 } }));
+            sections.push(new Paragraph({
+                heading: HeadingLevel.HEADING_2,
+                children: [
+                    new TextRun({ text: "Education", color: "8B0000", bold: true })
+                ],
+                spacing: { after: 40, before: 120 }
+            }));
             resumeObj.education.forEach(edu => {
                 sections.push(new Paragraph({
-                    text: `${edu.degree} - ${edu.school} (${edu.dates})`
+                    children: [
+                        new TextRun({ text: `${edu.degree} - ${edu.school}`, bold: true, size: 22 }),
+                        new TextRun({ text: `   ${edu.dates}`, italics: true, size: 22, color: "666666" })
+                    ],
+                    spacing: { after: 20 }
                 }));
             });
         }
+
         // Skills
         if (resumeObj.skills) {
-            sections.push(new Paragraph({ text: 'Skills', bold: true, spacing: { after: 100 } }));
-            sections.push(new Paragraph({ text: resumeObj.skills }));
+            sections.push(new Paragraph({
+                heading: HeadingLevel.HEADING_2,
+                children: [
+                    new TextRun({ text: "Skills", color: "8B0000", bold: true })
+                ],
+                spacing: { after: 40, before: 120 }
+            }));
+            // Split skills into bullets if comma-separated
+            const skillsArr = resumeObj.skills.split(/[,;]+/).map(s => s.trim()).filter(Boolean);
+            skillsArr.forEach(skill => {
+                sections.push(new Paragraph({
+                    text: skill,
+                    bullet: { level: 0 },
+                    spacing: { after: 10 }
+                }));
+            });
         }
-        // Pass sections to Document constructor
+
+        // Build the document
         const doc = new Document({
             creator: "Smart Resume Auditor",
             title: "Resume",
             description: "Generated resume document",
-            sections: [
-                { children: sections }
-            ]
+            sections: [{ children: sections }]
         });
+
         Packer.toBuffer(doc)
             .then(buffer => {
                 res.setHeader('Content-Disposition', 'attachment; filename=resume.docx');
@@ -407,12 +501,66 @@ function sendDocx(res, resumeObj) {
     }
 }
 
-router.get('/api/preview-enhanced-resume', (req, res) => {
+router.get('/preview-enhanced-resume', (req, res) => {
     const isTest = req.query.isTest === 'true';
     getLatestEnhancedResume((err, row) => {
         if (err || !row) return res.status(404).json({ error: 'No enhanced resume found.' });
         res.json({ resume: JSON.parse(row.gpt_enhanced_data) });
     }, isTest);
+});
+
+// List all enhanced resumes
+router.get('/enhanced-resumes', (req, res) => {
+    console.log('ENHANCED ENDPOINT HIT');
+    db.all(
+        'SELECT id, created_at, job_description, gpt_enhanced_data FROM resumes WHERE gpt_enhanced_data IS NOT NULL ORDER BY created_at DESC',
+        (err, rows) => {
+            if (err) return res.status(500).json({ error: 'DB error' });
+            const results = rows.map(row => ({
+                id: row.id,
+                created_at: row.created_at,
+                job_description: row.job_description,
+                resume: JSON.parse(row.gpt_enhanced_data)
+            }));
+            res.json({ resumes: results });
+        }
+    );
+});
+
+// Delete an enhanced resume by ID
+router.delete('/enhanced-resumes/:id', (req, res) => {
+    const id = req.params.id;
+    db.run(
+        'DELETE FROM resumes WHERE id = ? AND gpt_enhanced_data IS NOT NULL',
+        [id],
+        function (err) {
+            if (err) {
+                console.error('DB delete error:', err);
+                return res.status(500).json({ error: 'Failed to delete resume.' });
+            }
+            if (this.changes === 0) {
+                return res.status(404).json({ error: 'Resume not found.' });
+            }
+            res.status(204).end();
+        }
+    );
+});
+
+// Download a specific enhanced resume as DOCX by ID
+router.get('/enhanced-resumes/:id/download', (req, res) => {
+    const id = req.params.id;
+    db.get('SELECT gpt_enhanced_data FROM resumes WHERE id = ? AND gpt_enhanced_data IS NOT NULL', [id], (err, row) => {
+        if (err || !row) {
+            return res.status(404).json({ error: 'Enhanced resume not found.' });
+        }
+        let resumeObj;
+        try {
+            resumeObj = JSON.parse(row.gpt_enhanced_data);
+        } catch (e) {
+            return res.status(500).json({ error: 'Failed to parse enhanced resume.' });
+        }
+        sendDocx(res, resumeObj);
+    });
 });
 
 module.exports = router;

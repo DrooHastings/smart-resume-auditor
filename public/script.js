@@ -1,4 +1,4 @@
-const CIRCUIT_BREAKER = true; // Set to false to enable API calls
+const CIRCUIT_BREAKER = false; // Set to false to enable API calls
 
 function getResumeDataFromForm() {
     const data = {
