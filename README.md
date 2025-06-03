@@ -25,10 +25,10 @@ Smart Resume Auditor is a Node.js/Express application that uses OpenAI GPT-4 and
    npm install
    ```
 3. **Set up your OpenAI API key:**
-   - Create a `.env` file in the root directory:
-     ```
-     OPENAI_API_KEY=your_openai_api_key_here
-     ```
+   Create a `.env` file in the root directory:
+   ```
+   OPENAI_API_KEY=your_openai_api_key_here
+   ```
 4. **Run database migrations:**
    ```bash
    node migrate.js
@@ -38,8 +38,7 @@ Smart Resume Auditor is a Node.js/Express application that uses OpenAI GPT-4 and
    node server.js
    ```
 6. **Open the app:**
-   - Visit [http://localhost:3000](http://localhost:3000) in your browser.
-
+   Visit [http://localhost:3000](http://localhost:3000) in your browser.
 
 ## Testing
 
@@ -51,8 +50,9 @@ node api/test-analyze.js
 
 ## Database Migrations
 
-- The `migrate.js` script will check for and apply any necessary schema changes (such as new columns for test data isolation).
-- Run it any time you pull new changes that may affect the database schema.
+The `migrate.js` script will check for and apply any necessary schema changes (such as new columns for test data isolation).
+
+Run it any time you pull new changes that may affect the database schema.
 
 ## License
 
